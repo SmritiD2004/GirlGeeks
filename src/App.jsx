@@ -1,6 +1,8 @@
+// src/App.jsx - UPDATED VERSION
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
+
 import Auth from './components/Auth.jsx';
 import Onboarding from './components/Onboarding.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -12,13 +14,21 @@ import Navigation from './components/Navigation.jsx';
 import Tutorial from './components/Tutorial.jsx';
 
 function AppContent() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedModuleId, setSelectedModuleId] = useState(null);
   const [showTutorial, setShowTutorial] = useState(false);
 
+  // Reset view when user changes
   useEffect(() => {
-    if (profile && !localStorage.getItem(`tutorial_shown_${profile.id}`)) {
+    if (user) {
+      setCurrentView('dashboard');
+      setSelectedModuleId(null);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (profile && profile.id && !localStorage.getItem(`tutorial_shown_${profile.id}`)) {
       setShowTutorial(true);
     }
   }, [profile]);
@@ -31,35 +41,54 @@ function AppContent() {
   };
 
   const handleTutorialComplete = () => {
-    if (profile) {
+    if (profile?.id) {
       localStorage.setItem(`tutorial_shown_${profile.id}`, 'true');
     }
     setShowTutorial(false);
   };
 
+  const handleOnboardingComplete = async () => {
+    console.log('🔵 App: Onboarding complete');
+    if (refreshProfile) {
+      await refreshProfile();
+    }
+    setCurrentView('dashboard');
+  };
+
+  // Loading state - return nothing for instant load (NO SPINNER)
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-      </div>
-    );
+    <div className="flex items-center justify-center h-screen">
+      <div>Loading...</div>
+    </div>
+  );
   }
 
+  // Not authenticated - show auth screen
   if (!user) {
+    console.log('🔵 App: Showing auth screen (no user)');
     return <Auth />;
   }
 
+  // Authenticated but no profile - show onboarding
   if (!profile) {
-    return <Onboarding onComplete={() => {}} />;
+    console.log('🔵 App: Showing onboarding (no profile)');
+    return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
+  // Fully authenticated with profile - show main app
+  console.log('🔵 App: Showing main app');
   return (
     <>
       {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
       <Navigation currentView={currentView} onNavigate={handleNavigate} />
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {currentView === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
-        {currentView === 'learning' && <LearningModules selectedModuleId={selectedModuleId} />}
+        {currentView === 'dashboard' && (
+          <Dashboard onNavigate={handleNavigate} />
+        )}
+        {currentView === 'learning' && (
+          <LearningModules selectedModuleId={selectedModuleId} />
+        )}
         {currentView === 'chat' && <Chatbot />}
         {currentView === 'schemes' && <Schemes />}
         {currentView === 'community' && <Community />}

@@ -1,48 +1,50 @@
+// src/lib/seedData.js
 import { supabase } from './supabase';
-import { MODULE_TEMPLATES, STATE_SCHEMES } from '../data/moduleContent';
+import { MODULE_TEMPLATES } from '../data/moduleContent';
 
 export const seedDatabase = async () => {
   try {
-    const { data: existingModules } = await supabase
-      .from('learning_modules')
-      .select('id', { count: 'exact', head: true });
+    console.log('Seeding database: start');
 
-    if (existingModules && existingModules.length > 0) {
+    // 1. Check if learning_modules already has rows
+    const {
+      count: modulesCount,
+      error: modulesCountError,
+    } = await supabase
+      .from('learning_modules')
+      .select('*', { count: 'exact', head: true });
+
+    console.log('learning_modules count:', modulesCount, modulesCountError);
+
+    if (modulesCountError) {
+      console.error('Error checking existing modules:', modulesCountError);
+      // Bail out to avoid repeated failing inserts
       return;
     }
 
-    for (const module of MODULE_TEMPLATES) {
-      const { error } = await supabase.from('learning_modules').insert({
-        title: module.title,
-        description: module.description,
-        content: module.content,
-        category: module.category,
-        difficulty_level: module.difficulty_level,
-        order_index: module.order_index,
-      });
+    // 2. Seed learning_modules only if empty
+    if (!modulesCount || modulesCount === 0) {
+      console.log('Seeding learning_modules from MODULE_TEMPLATES');
+      for (const module of MODULE_TEMPLATES) {
+        const { error } = await supabase.from('learning_modules').insert({
+          title: module.title,
+          description: module.description,
+          content: module.content,
+          category: module.category,
+          difficulty_level: module.difficulty_level,
+          order_index: module.order_index,
+        });
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error inserting module:', error);
+        // PGRST116 = conflict (duplicate); ignore those, log others
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error inserting module:', error);
+        }
       }
+    } else {
+      console.log('learning_modules already seeded, skipping insert');
     }
 
-    for (const scheme of STATE_SCHEMES) {
-      const { error } = await supabase.from('state_schemes').insert({
-        state: scheme.state,
-        scheme_name: scheme.scheme_name,
-        description: scheme.description,
-        eligibility: scheme.eligibility,
-        application_steps: scheme.application_steps,
-        contact_info: scheme.contact_info,
-        category: scheme.category,
-      });
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error inserting scheme:', error);
-      }
-    }
-
-    console.log('Database seeded successfully');
+    console.log('Database seeding completed');
   } catch (error) {
     console.error('Error seeding database:', error);
   }

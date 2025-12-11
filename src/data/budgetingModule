@@ -1,0 +1,320 @@
+export const BUDGETING_MODULE = {
+  title: {
+    en: 'Introduction to Budgeting',
+    hi: 'बजट बनाने का परिचय',
+    mr: 'बजेट बनविण्याचा परिचय',
+    ta: 'பட்ஜெட்டிங் அறிமுகம்',
+    bn: 'বাজেট করার পরিচিতি',
+    kn: 'ಬಜೆಟ್ ಮಾಡುವ ಪರಿಚಯ',
+  },
+  description: {
+    en: 'Learn how to create and manage your personal budget',
+    hi: 'अपने व्यक्तिगत बजट को कैसे बनाएं और प्रबंधित करें सीखें',
+    mr: 'आपले वैयक्तिक बजेट कसे तयार करावे आणि व्यवस्थापित करावे ते शिका',
+    ta: 'உங்கள் தனிப்பட்ட பட்ஜெட்டை உருவாக்கி நிர்வகிப்பது எப்படி என்பதை அறிக',
+    bn: 'কীভাবে ব্যক্তিগत বাজেট তৈরি ও পরিচালনা করবেন তা শিখুন',
+    kn: 'ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಬಜೆಟ್ ಅನ್ನು ರಚಿಸಿ ನಿರ್ವಹಿಸುವುದನ್ನು ಕಲಿಯಿರಿ',
+  },
+  category: 'budgeting',
+  difficulty_level: 'beginner',
+  order_index: 1,
+  video_url: 'https://www.youtube.com/watch?v=3P1Y0LEH_4c',
+  thumbnail: 'https://img.youtube.com/vi/3P1Y0LEH_4c/maxresdefault.jpg',
+  duration_minutes: 8,
+  content: {
+    en: {
+      sections: [
+        {
+          title: 'What is a Budget?',
+          content: `A budget is a plan for your money. It shows how much you earn and how much you spend. Creating a budget helps you:
+
+• Track where your money goes
+• Save for important goals
+• Avoid unnecessary spending
+• Build financial security`,
+        },
+        {
+          title: 'The 50/30/20 Rule',
+          content: `A popular budgeting method:
+
+• 50% for NEEDS (food, shelter, utilities, transport)
+• 30% for WANTS (entertainment, dining out, hobbies)
+• 20% for SAVINGS & DEBT REPAYMENT
+
+Example: If you earn ₹10,000 per month:
+• ₹5,000 for needs
+• ₹3,000 for wants
+• ₹2,000 for savings or debt`,
+        },
+        {
+          title: 'Steps to Create Your Budget',
+          content: `1. Calculate your total monthly income
+2. List all your monthly expenses
+3. Categorize them as needs, wants, or savings
+4. Compare income with expenses
+5. Adjust spending if needed
+6. Review and update monthly
+
+Tip: Use a notebook or app to track your expenses.`,
+        },
+        {
+          title: 'Common Budgeting Tools',
+          content: `Popular free tools to track expenses:
+• Google Sheets templates
+• Money Manager EX (mobile app)
+• Wallet (Android/iOS)
+• Excel budget planners
+• Indian apps: Money View, Walnut`,
+        },
+      ],
+      quiz: [
+        {
+          question: 'What percentage of income should go to NEEDS in the 50/30/20 rule?',
+          options: ['30%', '50%', '20%', '70%'],
+          correct: 1,
+          explanation: 'In the 50/30/20 rule, 50% of income is reserved for essential needs such as food, housing, utilities, and transport.',
+        },
+        {
+          question: "What is the first step when creating a budget?",
+          options: [
+            'List all your expenses',
+            'Calculate your total monthly income',
+            'Categorize expenses',
+            'Adjust spending',
+          ],
+          correct: 1,
+          explanation: 'A budget starts by knowing your total monthly income from all sources; only then can you plan expenses.',
+        },
+        {
+          question: 'How often should you ideally review your budget?',
+          options: ['Once a year', 'Every month', 'Every week', 'Never'],
+          correct: 1,
+          explanation: 'Reviewing the budget monthly helps you adapt to changes in income or expenses and stay on track.',
+        },
+        {
+          question: 'Which category does groceries belong to?',
+          options: ['Wants', 'Savings', 'Needs', 'Debt'],
+          correct: 2,
+          explanation: 'Groceries are essential for daily living and fall under NEEDS category.',
+        },
+      ],
+    },
+    hi: {
+      sections: [
+        {
+          title: 'बजट क्या है?',
+          content: `बजट आपके पैसे की योजना है। यह दिखाता है कि आप कितना कमाते हैं और कितना खर्च करते हैं। बजट बनाने से:
+
+• आपके पैसे का हिसाब रहता है
+• महत्वपूर्ण लक्ष्यों के लिए बचत होती है
+• अनावश्यक खर्चों से बचते हैं
+• वित्तीय सुरक्षा बनती है`,
+        },
+        {
+          title: '50/30/20 नियम',
+          content: `यह एक लोकप्रिय बजट तरीका है:
+
+• 50% ज़रूरतों के लिए (खाना, घर, बिल, सफर)
+• 30% इच्छाओं के लिए (मनोरंजन, बाहर खाना, शौक)
+• 20% बचत और कर्ज़ चुकाने के लिए
+
+उदाहरण: अगर आप ₹10,000 प्रति माह कमाते हैं:
+• ₹5,000 ज़रूरतों के लिए
+• ₹3,000 इच्छाओं के लिए
+• ₹2,000 बचत या कर्ज़ के लिए`,
+        },
+        {
+          title: 'अपना बजट कैसे बनाएं',
+          content: `1. अपनी कुल मासिक आय निकालें
+2. सभी मासिक खर्च लिखें
+3. खर्चों को ज़रूरत, इच्छा और बचत में बाँटें
+4. आय और खर्च की तुलना करें
+5. ज़रूरत हो तो खर्चों में बदलाव करें
+6. हर महीने बजट की समीक्षा करें
+
+टिप: खर्च लिखने के लिए डायरी या मोबाइल ऐप का उपयोग करें।`,
+        },
+        {
+          title: 'लोकप्रिय बजट ऐप्स',
+          content: `मुफ्त खर्च ट्रैकिंग ऐप्स:
+• Google Sheets टेम्पलेट्स
+• Money Manager EX
+• Walnut ऐप
+• Money View
+• Excel बजट प्लानर`,
+        },
+      ],
+      quiz: [
+        {
+          question: '50/30/20 नियम में ज़रूरतों के लिए कितना प्रतिशत रखा जाता है?',
+          options: ['30%', '50%', '20%', '70%'],
+          correct: 1,
+          explanation: 'इस नियम के अनुसार आय का 50% ज़रूरी खर्चों जैसे भोजन, किराया और बिजली बिल के लिए होना चाहिए।',
+        },
+        {
+          question: 'बजट बनाने का पहला कदम क्या होना चाहिए?',
+          options: [
+            'खर्च लिखना शुरू करें',
+            'कुल मासिक आय निकालें',
+            'खर्चों को श्रेणियों में बाँटें',
+            'बचत तय करें',
+          ],
+          correct: 1,
+          explanation: 'सबसे पहले सभी स्रोतों से कुल मासिक आय जानना ज़रूरी है, ताकि उसी के अनुसार खर्च और बचत तय की जा सके।',
+        },
+        {
+          question: 'बजट कितनी बार समीक्षा करना चाहिए?',
+          options: ['साल में एक बार', 'हर महीने', 'हर हफ्ते', 'कभी नहीं'],
+          correct: 1,
+          explanation: 'मासिक समीक्षा से आय-व्यय में बदलाव के अनुसार बजट को अपडेट रखा जा सकता है।',
+        },
+      ],
+    },
+    mr: {
+      sections: [
+        {
+          title: 'बजेट म्हणजे काय?',
+          content: `बजेट म्हणजे तुमच्या पैशांचा आराखडा. हे दाखवते तुम्ही किती कमावता आणि किती खर्च करता. बजेट बनवल्याने:
+
+• पैशांचा हिशेब राहतो
+• महत्त्वाच्या उद्दिष्टांसाठी बचत होते
+• अनावश्यक खर्च टाळता येतो
+• आर्थिक सुरक्षितता मिळते`,
+        },
+        {
+          title: '५०/३०/२० नियम',
+          content: `प्रसिद्ध बजेट पद्धत:
+
+• ५०% गरजांसाठी (अन्न, निवारा, वीज, वाहतूक)
+• ३०% इच्छांसाठी (मनोरंजन, बाहेर जेवण, छंद)
+• २०% बचत आणि कर्ज भरपाईसाठी
+
+उदाहरण: ₹१०,००० मासिक उत्पन्न असल्यास:
+• ₹५,००० गरजांसाठी
+• ₹३,००० इच्छांसाठी
+• ₹२,००० बचत किंवा कर्जासाठी`,
+        },
+        {
+          title: 'तुमचा बजेट कसा बनवावा',
+          content: `१. एकूण मासिक उत्पन्न मोजा
+२. सर्व मासिक खर्च लिहा
+३. गरजा, इच्छा, बचत अशा श्रेणींमध्ये वर्गीकृत करा
+४. उत्पन्न आणि खर्चाची तुलना करा
+५. गरजेनुसार खर्च कमी करा
+६. दरमहा आढावा घ्या
+
+टिप: डायरी किंवा अॅप वापरा.`,
+        },
+      ],
+      quiz: [
+        {
+          question: '५०/३०/२० नियमात गरजांसाठी किती टक्के?',
+          options: ['३०%', '५०%', '२०%', '७०%'],
+          correct: 1,
+          explanation: '५०/३०/२० नियमात उत्पन्नाच्या ५०% अन्न, घरटं, वीज बिल यांसारख्या आवश्यक गरजांसाठी राखीव ठेवावे.',
+        },
+      ],
+    },
+    ta: {
+      sections: [
+        {
+          title: 'பட்ஜெட் என்றால் என்ன?',
+          content: `பட்ஜெட் என்பது உங்கள் பணத்திற்கான திட்டமாகும். இது நீங்கள் எவ்வளவு சம்பாதிக்கிறீர்கள் மற்றும் எவ்வளவு செலவழிக்கிறீர்கள் என்பதைக் காட்டுகிறது. பட்ஜெட் உருவாக்குவது உங்களுக்கு உதவுகிறது:
+
+• உங்கள் பணத்தின் போது எங்கே செலவாகிறது என்பதைப் பின்தொடர,
+• முக்கிய இலக்குகளுக்காகச் சேமிக்கவும்,
+• தேவையில்லா செலவுகளைத் தவிர்க்கவும்,
+• நிதி பாதுகாப்பை உருவாக்கவும்.`,
+        },
+        {
+          title: '५०/३०/२० விதி',
+          content: `பிரபலமான பட்ஜெட்டிங் முறை:
+
+• ५०% தேவைகளுக்கு (உணவு, தங்குமிடம், மின்சாரம், போக்குவரத்து)
+• ३०% விருப்பங்களுக்கு (பொழுதுபோக்கு, வெளியே உணவு, பொழுதுபோக்குகள்)
+• २०% சேமிப்பு & கடன் திருப்பீடு
+
+உதாரணம்: மாதாந்திர ₹१०,००० சம்பாதித்தால்:
+• ₹५,००० தேவைகளுக்கு
+• ₹३,००० விருப்பங்களுக்கு
+• ₹२,००० சேமிப்பு அல்லது கடன்`,
+        },
+      ],
+      quiz: [
+        {
+          question: '५०/३०/२० விதியில் தேவைகளுக்கு எவ்வளவு சதவீதம்?',
+          options: ['३०%', '५०%', '२०%', '७०%'],
+          correct: 1,
+          explanation: '५०/३०/२० விதியின்படி, உணவு, வாடகை, மின்சாரம் போன்ற அத்தியாவசிய தேவைகளுக்கு ५०% வருமானம் ஒதுக்கப்பட வேண்டும்.',
+        },
+      ],
+    },
+    bn: {
+      sections: [
+        {
+          title: 'বাজেট কী?',
+          content: `বাজেট আপনার টাকার পরিকল্পনা। এটি দেখায় আপনি কত আয় করেন এবং কত খরচ করেন। বাজেট তৈরি করলে:
+
+• আপনার টাকা কোথায় যায় তা ট্র্যাক করা যায়
+• গুরুত্বপূর্ণ লক্ষ্যের জন্য সঞ্চয় করা যায়
+• অপ্রয়োজনীয় খরচ এড়ানো যায়
+• আর্থিক নিরাপত্তা গড়ে ওঠে`,
+        },
+        {
+          title: '৫০/৩০/২০ নিয়ম',
+          content: `জনপ্রিয় বাজেট পদ্ধতি:
+
+• ৫০% প্রয়োজনের জন্য (খাবার, আশ্রয়, বিদ্যুৎ, পরিবহন)
+• ৩০% ইচ্ছার জন্য (বিনোদন, বাইরে খাওয়া, শখ)
+• ২০% সঞ্চয় ও ঋণ পরিশোধের জন্য
+
+উদাহরণ: মাসে ₹১০,০০০ আয় হলে:
+• ₹৫,০০০ প্রয়োজনের জন্য
+• ₹৩,০০০ ইচ্ছার জন্য
+• ₹২,০০০ সঞ্চয় বা ঋণের জন্য`,
+        },
+      ],
+      quiz: [
+        {
+          question: '৫০/৩০/২০ নিয়মে প্রয়োজনের জন্য কত শতাংশ?',
+          options: ['৩০%', '৫০%', '২০%', '৭০%'],
+          correct: 1,
+          explanation: '৫০/৩০/২০ নিয়মে আয়ের ৫০% খাবার, ভাড়া, বিদ্যুৎ বিলের মতো অপরিহার্য খরচের জন্য রাখতে হয়।',
+        },
+      ],
+    },
+    kn: {
+      sections: [
+        {
+          title: 'ಬಜೆಟ್ ಅಂದರೆ ಏನು?',
+          content: `ಬಜೆಟ್ ನಿಮ್ಮ ಹಣದ ಯೋಜನೆ. ಇದು ನೀವು ಎಷ್ಟು ಸಂಪಾದಿಸುತ್ತೀರಿ ಮತ್ತು ಎಷ್ಟು ಖರ್ಚು ಮಾಡುತ್ತೀರಿ ಎಂಬುದನ್ನು ತೋರಿಸುತ್ತದೆ. ಬಜೆಟ್ ತಯಾರಿಸುವುದು ನಿಮಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ:
+
+• ನಿಮ್ಮ ಹಣ ಎಲ್ಲಿ ಹೋಗುತ್ತದೆ ಎಂಬುದನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ
+• ಮುಖ್ಯ ಗುರಿಗಳಿಗಾಗಿ ಉಳಿಸಿ
+• ಅನಗತ್ಯ ಖರ್ಚುಗಳನ್ನು ತಪ್ಪಿಸಿ
+• ಆರ್ಥಿಕ ಸುರಕ್ಷತೆ ನಿರ್ಮಾಣ ಮಾಡಿ`,
+        },
+        {
+          title: '೫೦/೩೦/೨೦ ನಿಯಮ',
+          content: `ಜನಪ್ರಿಯ ಬಜೆಟ್ ವಿಧಾನ:
+
+• ೫೦% ಅಗತ್ಯಗಳಿಗೆ (ಆಹಾರ, ಆಶ್ರಯ, ವಿದ್ಯುತ್, ಸಾರಿಗೆ)
+• ೩೦% ಇಚ್ಛೆಗಳಿಗೆ (ವಿನೋದ, ಹೊರಗೆ ತಿನಿಸುವುದು, ಆಗ್ರಹಗಳು)
+• ೨೦% ಸಂಪಾದನೆ & ಕಡ್ಡಾಯ ಪಾವತಿಗಳಿಗೆ
+
+ಉದಾಹರಣೆ: ₹೧೦,೦೦೦ ತಿಂಗಳು ಆದಾಯ:
+• ₹೫,೦೦೦ ಅಗತ್ಯಗಳಿಗೆ
+• ₹೩,೦೦೦ ಇಚ್ಛೆಗಳಿಗೆ
+• ₹೨,೦೦೦ ಸಂಪಾದನೆಗೆ`,
+        },
+      ],
+      quiz: [
+        {
+          question: '೫೦/೩೦/೨೦ ನಿಯಮದಲ್ಲಿ ಅಗತ್ಯಗಳಿಗೆ ಎಷ್ಟು ಶೇಕಡಾ?',
+          options: ['೩೦%', '೫೦%', '೨೦%', '೭೦%'],
+          correct: 1,
+          explanation: '೫೦/೩೦/೨೦ ನಿಯಮದಲ್ಲಿ ಆಹಾರ, ಮನೆ, ವಿದ್ಯುತ್ ಬಿಲ್‌ಗಳಂತಹ ಅಗತ್ಯ ಖರ್ಚುಗಳಿಗೆ ೫೦% ಆದಾಯವನ್ನು ಮೀಸಲಿಡಬೇಕು.',
+        },
+      ],
+    },
+  },};

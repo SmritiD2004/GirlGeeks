@@ -9,7 +9,11 @@ export default function Community() {
   const { t } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [showNewPost, setShowNewPost] = useState(false);
-  const [newPost, setNewPost] = useState({ title: '', content: '', category: 'general' });
+  const [newPost, setNewPost] = useState({
+    title: '',
+    content: '',
+    category: 'general',
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,10 +22,12 @@ export default function Community() {
 
   const loadPosts = async () => {
     try {
+      // OPTIMIZED: Only load 50 most recent posts
       const { data } = await supabase
         .from('community_posts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50); // ADDED: Limit results
 
       setPosts(data || []);
     } catch (error) {
@@ -57,10 +63,15 @@ export default function Community() {
     try {
       await supabase
         .from('community_posts')
-        .update({ likes_count: currentLikes + 1 })
+        .update({ likes_count: (currentLikes || 0) + 1 })
         .eq('id', postId);
 
-      loadPosts();
+      // OPTIMIZED: Update local state instead of reloading all posts
+      setPosts(posts.map(p => 
+        p.id === postId 
+          ? { ...p, likes_count: (currentLikes || 0) + 1 } 
+          : p
+      ));
     } catch (error) {
       console.error('Error liking post:', error);
     }
@@ -84,30 +95,37 @@ export default function Community() {
               {t('community')}
             </h1>
             <p className="text-gray-600">
-              Share your journey, learn from others, and build financial confidence together
+              {t('communitySubtitle') ||
+                'Share your journey, learn from others, and build financial confidence together'}
             </p>
           </div>
           <button
             onClick={() => setShowNewPost(!showNewPost)}
             className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium"
           >
-            {showNewPost ? 'Cancel' : t('shareStory')}
+            {showNewPost
+              ? t('cancel') || 'Cancel'
+              : t('shareStory') || 'Share Your Story'}
           </button>
         </div>
       </div>
 
       {showNewPost && (
         <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Create New Post</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            {t('createNewPost') || 'Create New Post'}
+          </h2>
           <form onSubmit={handleCreatePost} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title
+                {t('title') || 'Title'}
               </label>
               <input
                 type="text"
                 value={newPost.title}
-                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                onChange={(e) =>
+                  setNewPost({ ...newPost, title: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 required
               />
@@ -115,27 +133,39 @@ export default function Community() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
+                {t('category') || 'Category'}
               </label>
               <select
                 value={newPost.category}
-                onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
+                onChange={(e) =>
+                  setNewPost({ ...newPost, category: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               >
-                <option value="general">General</option>
-                <option value="success_story">Success Story</option>
-                <option value="question">Question</option>
-                <option value="advice">Advice</option>
+                <option value="general">
+                  {t('category.general') || 'General'}
+                </option>
+                <option value="success_story">
+                  {t('category.success_story') || 'Success Story'}
+                </option>
+                <option value="question">
+                  {t('category.question') || 'Question'}
+                </option>
+                <option value="advice">
+                  {t('category.advice') || 'Advice'}
+                </option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Content
+                {t('content') || 'Content'}
               </label>
               <textarea
                 value={newPost.content}
-                onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                onChange={(e) =>
+                  setNewPost({ ...newPost, content: e.target.value })
+                }
                 rows={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 required
@@ -160,9 +190,11 @@ export default function Community() {
         ) : (
           <div className="bg-white rounded-xl shadow-md p-12 text-center">
             <MessageCircle className="mx-auto text-gray-400 mb-4" size={48} />
-            <p className="text-gray-600 text-lg">No posts yet</p>
+            <p className="text-gray-600 text-lg">
+              {t('noPostsYet') || 'No posts yet'}
+            </p>
             <p className="text-gray-500 text-sm mt-2">
-              Be the first to share your story!
+              {t('beFirstToShareStory') || 'Be the first to share your story!'}
             </p>
           </div>
         )}
@@ -175,19 +207,27 @@ function PostCard({ post, onLike, t }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [loadingComments, setLoadingComments] = useState(false); // ADDED
   const { profile } = useAuth();
 
   const loadComments = async () => {
+    // OPTIMIZED: Prevent duplicate loading
+    if (loadingComments || comments.length > 0) return;
+    
+    setLoadingComments(true);
     try {
       const { data } = await supabase
         .from('community_comments')
         .select('*')
         .eq('post_id', post.id)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true })
+        .limit(50); // ADDED: Limit comments
 
       setComments(data || []);
     } catch (error) {
       console.error('Error loading comments:', error);
+    } finally {
+      setLoadingComments(false);
     }
   };
 
@@ -196,16 +236,21 @@ function PostCard({ post, onLike, t }) {
     if (!profile || !newComment.trim()) return;
 
     try {
-      const { error } = await supabase.from('community_comments').insert({
-        post_id: post.id,
-        user_id: profile.id,
-        content: newComment,
-      });
+      const { data, error } = await supabase
+        .from('community_comments')
+        .insert({
+          post_id: post.id,
+          user_id: profile.id,
+          content: newComment,
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
+      // OPTIMIZED: Add comment to local state instead of reloading
+      setComments([...comments, data]);
       setNewComment('');
-      loadComments();
     } catch (error) {
       console.error('Error adding comment:', error);
     }
@@ -225,13 +270,16 @@ function PostCard({ post, onLike, t }) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                {post.category.replace(/_/g, ' ')}
+                {t(`category.${post.category}`) ||
+                  post.category.replace(/_/g, ' ')}
               </span>
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               {post.title}
             </h3>
-            <p className="text-gray-600 whitespace-pre-wrap">{post.content}</p>
+            <p className="text-gray-600 whitespace-pre-wrap">
+              {post.content}
+            </p>
           </div>
         </div>
 
@@ -249,40 +297,55 @@ function PostCard({ post, onLike, t }) {
             className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition-colors"
           >
             <MessageCircle size={20} />
-            <span>{comments.length} {t('comments')}</span>
+            <span>
+              {comments.length} {t('comments')}
+            </span>
           </button>
         </div>
       </div>
 
       {showComments && (
         <div className="px-6 pb-6 border-t bg-gray-50">
-          <div className="mt-4 space-y-3">
-            {comments.map((comment) => (
-              <div key={comment.id} className="bg-white p-4 rounded-lg">
-                <p className="text-sm font-medium text-gray-700 mb-1">
-                  User
-                </p>
-                <p className="text-gray-600">{comment.content}</p>
+          {loadingComments ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+            </div>
+          ) : (
+            <>
+              <div className="mt-4 space-y-3">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="bg-white p-4 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      {t('user') || 'User'}
+                    </p>
+                    <p className="text-gray-600">{comment.content}</p>
+                  </div>
+                ))}
+                {comments.length === 0 && (
+                  <p className="text-gray-500 text-center py-4">
+                    No comments yet. Be the first to comment!
+                  </p>
+                )}
               </div>
-            ))}
-          </div>
 
-          <form onSubmit={handleAddComment} className="mt-4 flex gap-2">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            />
-            <button
-              type="submit"
-              disabled={!newComment.trim()}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Send size={20} />
-            </button>
-          </form>
+              <form onSubmit={handleAddComment} className="mt-4 flex gap-2">
+                <input
+                  type="text"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder={t('addCommentPlaceholder') || 'Add a comment...'}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+                <button
+                  type="submit"
+                  disabled={!newComment.trim()}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={20} />
+                </button>
+              </form>
+            </>
+          )}
         </div>
       )}
     </div>
