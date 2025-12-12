@@ -80,22 +80,29 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const loadProfile = async (userId) => {
-    // Prevent concurrent profile loads
-    if (loadingProfileRef.current) {
-      console.log('⚠ Auth: Already loading profile, skipping...');
-      return;
-    }
+  // In AuthContext.jsx, modify loadProfile function:
+const loadProfile = async (userId) => {
+  if (loadingProfileRef.current) {
+    console.log('⚠ Auth: Already loading profile, skipping...');
+    return;
+  }
 
-    loadingProfileRef.current = true;
-    console.log('🔵 Auth: loadProfile start for', userId);
+  loadingProfileRef.current = true;
+  console.log('🔵 Auth: loadProfile start for', userId);
 
-   try {
-    const { data, error } = await supabase
+  // ADD: Timeout wrapper
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Profile load timeout')), 10000)
+  );
+
+  try {
+    const profilePromise = supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle();
+
+    const { data, error } = await Promise.race([profilePromise, timeoutPromise]);
 
     if (error) {
       console.error('❌ Auth: Error loading profile:', error);
@@ -115,7 +122,8 @@ export function AuthProvider({ children }) {
     loadingProfileRef.current = false;
     setLoading(false);
   }
-  };
+};
+
 
   const refreshProfile = async () => {
     if (user?.id) {

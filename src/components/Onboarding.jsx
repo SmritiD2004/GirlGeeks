@@ -82,71 +82,91 @@ export default function Onboarding({ onComplete }) {
     setLanguage(lang);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    try {
-      if (!user?.id) {
-        throw new Error("No authenticated user found. Please sign in again.");
-      }
+  // Add timeout to prevent infinite loading
+  const timeoutId = setTimeout(() => {
+    setLoading(false);
+    setError("Request timed out. Please check your connection and try again.");
+  }, 15000); // 15 second timeout
 
-      console.log("🔵 Onboarding: Creating profile for user", user.id);
-
-      const profileData = {
-        id: user.id, // must match auth.users.id
-        preferred_language: formData.preferred_language,
-        home_state: formData.home_state,
-        occupation: formData.occupation,
-        financial_goals: formData.financial_goals,
-        income_range: formData.income_range,
-        updated_at: new Date().toISOString(),
-      };
-
-      console.log("🔵 Onboarding: Attempting to save profile...", profileData);
-
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .upsert(profileData, {
-          onConflict: "id",
-        });
-
-      if (profileError) {
-        console.error("❌ Onboarding: Error creating profile:", profileError);
-        console.error("❌ Error details:", {
-          message: profileError.message,
-          details: profileError.details,
-          hint: profileError.hint,
-          code: profileError.code,
-        });
-
-        if (profileError.code === "42P01") {
-          throw new Error(
-            'Database table "profiles" does not exist. Please run the setup SQL.'
-          );
-        } else if (profileError.code === "42501") {
-          throw new Error("Permission denied. Please check RLS policies.");
-        } else {
-          throw profileError;
-        }
-      }
-
-      console.log("✅ Onboarding: Profile created/updated successfully");
-
-      // Load fresh profile into context so App knows onboarding is done
-      await refreshProfile();
-
-      if (onComplete) onComplete();
-    } catch (err) {
-      console.error("❌ Onboarding: Exception:", err);
-      setError(
-        err.message || "Failed to save profile. Check console for details."
-      );
-    } finally {
-      setLoading(false);
+  try {
+    if (!user?.id) {
+      throw new Error("No authenticated user found. Please sign in again.");
     }
-  };
+
+    console.log("🔵 Onboarding: Creating profile for user", user.id);
+
+    const profileData = {
+      id: user.id,
+      preferred_language: formData.preferred_language,
+      home_state: formData.home_state,
+      occupation: formData.occupation,
+      financial_goals: formData.financial_goals,
+      income_range: formData.income_range,
+      updated_at: new Date().toISOString(),
+    };
+
+    console.log("🔵 Onboarding: Attempting to save profile...", profileData);
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert(profileData, {
+        onConflict: "id",
+      });
+
+    if (profileError) {
+      console.error("❌ Onboarding: Error creating profile:", profileError);
+      console.error("❌ Error details:", {
+        message: profileError.message,
+        details: profileError.details,
+        hint: profileError.hint,
+        code: profileError.code,
+      });
+
+      if (profileError.code === "42P01") {
+        throw new Error(
+          'Database table "profiles" does not exist. Please run the setup SQL.'
+        );
+      } else if (profileError.code === "42501") {
+        throw new Error("Permission denied. Please check RLS policies.");
+      } else {
+        throw profileError;
+      }
+    }
+
+    console.log("✅ Onboarding: Profile created/updated successfully");
+
+    // Clear timeout since operation succeeded
+    clearTimeout(timeoutId);
+
+    // Load fresh profile into context
+    await refreshProfile();
+
+    if (onComplete) onComplete();
+  } catch (err) {
+    console.error("❌ Onboarding: Exception:", err);
+    
+    // Provide user-friendly error messages
+    let errorMessage = "Failed to save profile. Please try again.";
+    
+    if (err.message.includes("fetch")) {
+      errorMessage = "Network error. Please check your internet connection.";
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+    
+    setError(errorMessage);
+  } finally {
+    // CRITICAL: Always clear timeout and reset loading state
+    clearTimeout(timeoutId);
+    setLoading(false);
+  }
+};
+
 
   const toggleGoal = (goal) => {
     setFormData((prev) => ({
