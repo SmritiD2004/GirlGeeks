@@ -75,56 +75,116 @@ export default function LearningModules({ selectedModuleId }) {
     setShowQuiz(false);
   };
 
-  const handleCompleteModule = async (quizScore) => {
-    if (!selectedModule || !profile?.id) return;
+ const handleCompleteModule = async (quizScore) => {
+  console.log('🔵 handleCompleteModule called with:', {
+    quizScore,
+    selectedModule: selectedModule?.id,
+    profileId: profile?.id
+  });
 
-    try {
-      const progress = getModuleProgress(selectedModule.id);
-      const passed = quizScore >= (selectedModule.passing_score || 70);
+  if (!selectedModule || !profile?.id) {
+    console.error('❌ Missing required data');
+    alert('Error: Missing module or profile data');
+    return;
+  }
 
-      // Only write to Supabase if this module has a real DB id
-      const hasDbId = !!selectedModule.id;
+  try {
+    const progress = getModuleProgress(selectedModule.id);
+    const passed = quizScore >= (selectedModule.passing_score || 70);
 
-      if (hasDbId) {
-        if (progress) {
-          await supabase
-            .from('user_progress')
-            .update({
-              completed: passed,
-              completed_at: passed ? new Date().toISOString() : null,
-              score: quizScore,
-              quiz_passed: passed,
-              quiz_attempts: (progress.quiz_attempts || 0) + 1,
-            })
-            .eq('id', progress.id);
-        } else {
-          await supabase
-            .from('user_progress')
-            .insert({
-              user_id: profile.id,
-              module_id: selectedModule.id,
-              completed: passed,
-              completed_at: passed ? new Date().toISOString() : null,
-              score: quizScore,
-              quiz_passed: passed,
-              quiz_attempts: 1,
-            });
-        }
+    console.log('📊 Module completion details:', {
+      moduleId: selectedModule.id,
+      userId: profile.id,
+      score: quizScore,
+      passingScore: selectedModule.passing_score,
+      passed,
+      existingProgress: progress
+    });
 
-        if (passed) {
-          await updateStreak();
-        }
-
-        await loadModules();
+    if (progress) {
+      console.log('📝 Updating existing progress...');
+      
+      const { data, error } = await supabase
+        .from('user_progress')
+        .update({
+          completed: passed,
+          completed_at: passed ? new Date().toISOString() : null,
+          score: quizScore,
+          quiz_passed: passed,
+          quiz_attempts: (progress.quiz_attempts || 0) + 1,
+        })
+        .eq('id', progress.id)
+        .select();
+      
+      if (error) {
+        console.error('❌ Update error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
       }
-
-      setShowQuiz(false);
-      setShowContent(false);
-      setSelectedModule(null);
-    } catch (error) {
-      console.error('Error completing module:', error);
+      
+      console.log('✅ Update successful:', data);
+    } else {
+      console.log('📝 Inserting new progress...');
+      
+      const insertData = {
+        user_id: profile.id,
+        module_id: selectedModule.id,
+        completed: passed,
+        completed_at: passed ? new Date().toISOString() : null,
+        score: quizScore,
+        quiz_passed: passed,
+        quiz_attempts: 1,
+      };
+      
+      console.log('📤 Insert data:', insertData);
+      
+      const { data, error } = await supabase
+        .from('user_progress')
+        .insert(insertData)
+        .select();
+      
+      if (error) {
+        console.error('❌ Insert error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
+      
+      console.log('✅ Insert successful:', data);
     }
-  };
+
+    console.log('✅ Progress saved successfully');
+
+    if (passed) {
+      console.log('🔥 Updating streak...');
+      await updateStreak();
+    }
+
+    console.log('🔄 Reloading modules...');
+    await loadModules();
+
+    setShowQuiz(false);
+    setShowContent(false);
+    setSelectedModule(null);
+    
+    alert(passed ? '✅ Module completed!' : `Score: ${quizScore}%. Need ${selectedModule.passing_score || 70}% to pass.`);
+
+  } catch (error) {
+    console.error('❌ Complete exception:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+    alert(`Failed to save progress: ${error.message}`);
+  }
+};
 
   const updateStreak = async () => {
     if (!profile?.id) return;
